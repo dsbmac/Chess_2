@@ -24,6 +24,11 @@ String[] armyTypes = {"classic"};
 // 3 - rook
 // 4 - queen
 // 5 - king
+// 6 - nemesis
+// 7 - nemesis pawn
+// 8 - empowered knight
+// 9 - empowered bishop
+// 10 - empowered rook
 
 
 void setup() {
@@ -157,7 +162,7 @@ ArrayList<Piece> createClassicArmy(int turnOrder) {
   for (int col=1; col<9; col++) {
     BoardPosition bp = new BoardPosition(col, rowPos);
     PVector position = convertBoardToScreen(bp);
-    Piece newPiece = new Piece(0, position);
+    Piece newPiece = new ClassicPawn(0);
     pieces.add(newPiece);      
   }
   
@@ -165,27 +170,31 @@ ArrayList<Piece> createClassicArmy(int turnOrder) {
 }    
 
 class Piece {
-  int ownerID, type;
+  int player, type;
   PImage image;
-  PVector screenPosition;
-  Piece(int t, int player, PImage image) {
-    type = t;
-    screenPosition = pos;
+  Piece(int player) {
+    this.type = type;
+  }
+} 
+
+class ClassicPawn extends Piece {
+  int type;
+  int player;
+  ClassicPawn(int player) {
+    super(player);
+    type = 1;
+    this.player = player;
     image = piece0_1;
   }
-  
-  // getter for position
-  PVector getPosition() {
-    return screenPosition;
-  }
-  
+
+    
   ArrayList<int[]> generateValidMoves(BoardPosition currentPosition, ArrayList<BoardPosition> boardSetup) {
     ArrayList<int[]> moves = new ArrayList<int[]>();
     switch (type) {
       case 0:
         // one space forward
         int newRow, newCol;
-        if (ownerID == 0) {
+        if (player == 0) {
           newRow = currentPosition.row + 1;
         } else {
           newRow = currentPosition.row - 1;
@@ -194,7 +203,7 @@ class Piece {
     }
     return moves;
   }
-} 
+}
 
 PVector convertBoardToScreen(BoardPosition bp) {
   PVector screenPosition = new PVector((bp.row-1)*UNIT, (bp.col-1)*UNIT);
