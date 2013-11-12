@@ -154,13 +154,13 @@ class Board {
       println("square: " + entry.getKey());
       println("value: " + entry.getValue());
       ArrayList<Piece> square = (ArrayList<Piece>) entry.getValue();
+      println("isEmpty: " + square.isEmpty()); 
       if (!square.isEmpty()) {      
         PVector boardVector = (PVector) entry.getKey();
-        PVector screenVector = convertBoardToScreen(boardVector);
+        PVector pos = convertBoardToScreen(boardVector);
         PImage img = square.get(0).image;
-        image(img, 0, 0, UNIT, UNIT);
+        image(img, pos.x, pos.y, UNIT, UNIT);
       }
-      
     }
   }
 }
@@ -203,8 +203,6 @@ class BoardPosition {
   }
 }
 
-
-
 class Piece {
   int player, type, armyType;
   PImage image;
@@ -242,6 +240,7 @@ class ClassicPawn extends Piece {
 
 PVector convertBoardToScreen(PVector pv) {
   PVector screenPosition = new PVector(pv.x*UNIT, pv.y*UNIT);
+  println(pv + "->" + screenPosition);
   return screenPosition;
 }
 
