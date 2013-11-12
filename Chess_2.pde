@@ -30,6 +30,7 @@ PImage outlineImg, blackKnightImg, chessSetImg, piece0_1;
 
 void setup() {
   size(WIDTH, HEIGHT);
+  noLoop();
   frameRate(1);
   initGame();
   play();
@@ -87,7 +88,7 @@ class Game {
 
   void setup_board() {
     this.board = new Board();
-    board.add_army(players[0]);
+    board.add_army(players[0].armyType, players[0].turnOrder);
   }
 
   void setBoard(Board board) {
@@ -121,7 +122,6 @@ class Board {
     case 0:
       addClassicArmy(turnOrder);
     default:
-      return result;
     }
   }
 
@@ -131,25 +131,37 @@ class Board {
     // create pawns
     int row;
     if (turnOrder == 0) {
-      row = 2;
+      row = 6;
     } 
     else {
-      row = 7;
+      row = 1;
     }
 
-    for (int col=1; col<9; col++) {
+    for (int col=0; col<8; col++) {
       PVector square = new PVector(col, row);
       Piece newPiece = new ClassicPawn(0, 0);
-      board.put(square, newPiece);
+      board.get(square).add(newPiece);
     }
-
-    return pieces;
   }
-
-
 
   void display() {
     image(boardImg, 0, 0, WIDTH, HEIGHT);
+    display_pieces();
+  }
+
+  void display_pieces() {
+    for (Map.Entry entry : board.entrySet()) {
+      println("square: " + entry.getKey());
+      println("value: " + entry.getValue());
+      ArrayList<Piece> square = (ArrayList<Piece>) entry.getValue();
+      if (!square.isEmpty()) {      
+        PVector boardVector = (PVector) entry.getKey();
+        PVector screenVector = convertBoardToScreen(boardVector);
+        PImage img = square.get(0).image;
+        image(img, 0, 0, UNIT, UNIT);
+      }
+      
+    }
   }
 }
 
@@ -176,7 +188,6 @@ class Player {
   Player(int armyType, int turnOrder) {
     this.turnOrder = turnOrder;
     this.armyType = armyType;
-    pieces = createArmy(armyType, turnOrder);
   }
 }
 
@@ -229,8 +240,8 @@ class ClassicPawn extends Piece {
   }
 }
 
-PVector convertBoardToScreen(BoardPosition bp) {
-  PVector screenPosition = new PVector((bp.row-1)*UNIT, (bp.col-1)*UNIT);
+PVector convertBoardToScreen(PVector pv) {
+  PVector screenPosition = new PVector(pv.x*UNIT, pv.y*UNIT);
   return screenPosition;
 }
 
